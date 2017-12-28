@@ -90,7 +90,7 @@
       (mirror false)
       (drillshape 0)
       (scaleselection 1)
-      (outputdirectory Z:/Engineering/Projects/Adapter_Boards/Arduino_Pro_Mini_mikroBUS/Hardware/EDA/Gerbers/))
+      (outputdirectory Gerbers/))
   )
 
   (net 0 "")
@@ -185,6 +185,11 @@
       (net 13 D4))
     (pad 1 thru_hole rect (at -12.7 0 270) (size 1.397 1.397) (drill 0.79375) (layers *.Cu *.Mask F.SilkS)
       (net 5 D5))
+    (model C:/Engineering/KiCAD_Libraries/3D/Headers/VRML/Harwin_M20-7821146.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Active:SO-8 (layer F.Cu) (tedit 5A44572D) (tstamp 5A434ECE)
@@ -1680,6 +1685,11 @@
     (pad 2 thru_hole circle (at -10.16 0 270) (size 1.397 1.397) (drill 0.79375) (layers *.Cu *.Mask F.SilkS))
     (pad 1 thru_hole rect (at -12.7 0 270) (size 1.397 1.397) (drill 0.79375) (layers *.Cu *.Mask F.SilkS)
       (net 18 D8))
+    (model C:/Engineering/KiCAD_Libraries/3D/Headers/VRML/HEADER_F_2.54MM_1R11P_ST_AU_PTH.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Passive:0603 (layer F.Cu) (tedit 58A872BE) (tstamp 5A446BFC)
@@ -1753,6 +1763,11 @@
       (net 1 GND))
     (pad 4 thru_hole circle (at 3.81 0) (size 1.7272 1.7272) (drill 0.9906) (layers *.Cu *.Mask)
       (net 9 5.0V))
+    (model C:/Engineering/KiCAD_Libraries/3D/Power_Supplies/DC_DC_Converters/VRML/RECOM_RM-0505S.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (gr_line (start 67.31 53.34) (end 92.71 53.34) (angle 90) (layer F.SilkS) (width 0.127))
@@ -2061,13 +2076,13 @@
   (via (at 76.708 46.228) (size 0.4572) (drill 0.3048) (layers F.Cu B.Cu) (net 15))
   (segment (start 77.56 45.376) (end 76.708 46.228) (width 0.1524) (layer F.Cu) (net 15) (tstamp 5A446FDA))
   (segment (start 90.551 83.185) (end 90.17 82.804) (width 0.4572) (layer F.Cu) (net 16))
-  (segment (start 90.551 99.568) (end 90.551 83.185) (width 0.4572) (layer F.Cu) (net 16) (status 400000))
+  (segment (start 90.551 99.568) (end 90.551 83.185) (width 0.4572) (layer F.Cu) (net 16))
   (segment (start 90.17 82.804) (end 90.17 74.93) (width 0.4572) (layer F.Cu) (net 16) (tstamp 5A447090))
   (segment (start 68.072 74.93) (end 82.042 74.93) (width 0.4572) (layer F.Cu) (net 16))
   (segment (start 87.63 72.39) (end 90.17 74.93) (width 0.4572) (layer F.Cu) (net 16) (tstamp 5A447031))
   (segment (start 84.582 72.39) (end 87.63 72.39) (width 0.4572) (layer F.Cu) (net 16) (tstamp 5A44702F))
   (segment (start 82.042 74.93) (end 84.582 72.39) (width 0.4572) (layer F.Cu) (net 16) (tstamp 5A44702D))
-  (segment (start 90.17 74.93) (end 91.948 74.93) (width 0.4572) (layer F.Cu) (net 16) (tstamp 5A447032) (status 800000))
+  (segment (start 90.17 74.93) (end 91.948 74.93) (width 0.4572) (layer F.Cu) (net 16) (tstamp 5A447032))
   (segment (start 73.66 96.52) (end 74.422 97.282) (width 0.4572) (layer F.Cu) (net 16))
   (segment (start 88.138 99.568) (end 90.551 99.568) (width 0.4572) (layer F.Cu) (net 16) (tstamp 5A446FEE))
   (segment (start 86.36 97.79) (end 88.138 99.568) (width 0.4572) (layer F.Cu) (net 16) (tstamp 5A446FED))
