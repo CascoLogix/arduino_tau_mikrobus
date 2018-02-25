@@ -29,11 +29,6 @@
 #include <stdint.h>
 
 
-#define TERM_CHAR     '\r'      // Carriage return character
-//#define TERM_CHAR     '\n'      // Newline character
-
-#define MENU_EXIT     0
-
 #define SSID_MAX_LEN                32
 #define WIFI_PWD_MAX_LEN            64
 #define ENCRYPTION_KEY_MAX_LEN      32

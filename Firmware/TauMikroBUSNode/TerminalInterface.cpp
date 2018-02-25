@@ -26,6 +26,10 @@
 #include "TerminalInterface.h"
 
 
+#define TERM_CHAR     '\r'      // Carriage return character
+//#define TERM_CHAR     '\n'      // Newline character
+
+
 struct {
   char leading[128];    uint8_t numLeading;
   char global[128];     uint8_t numGlobal;
