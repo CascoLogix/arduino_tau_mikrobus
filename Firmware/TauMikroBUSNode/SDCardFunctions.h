@@ -1,5 +1,5 @@
 /**
- *  main.h
+ *  SDCardFunctions.h
  *
  *  Created: 2018 Feb 24
  *  Author: Clint Stevenson
@@ -22,16 +22,22 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __SD_CARD_FUNCTIONS_H__
+#define __SD_CARD_FUNCTIONS_H__
 
 
-#define TERM_CHAR                   '\r'      // Carriage return character
-//#define TERM_CHAR                 '\n'      // Newline character
-
-#define MENU_EXIT                   '0'
-
-#define FLASH_CS_PIN                4
+#include <stdint.h>
+#include <SD.h>
+#include "ApplicationFlashFunctions.h"
 
 
-#endif  // __MAIN_H__
+void SDisDetected (void);
+void SDFileExists (char filename[]);
+void SDFileIsValid (char filename[]);
+void SDReadFile (flashConfig_t * data);
+void SDCreateLogFile (char filename[]);
+void SDAppendLogFile (char filename[]);
+
+
+#endif  // __SD_CARD_FUNCTIONS_H__
+

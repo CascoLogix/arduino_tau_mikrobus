@@ -36,21 +36,21 @@
 
 #define SSID_MAX_LEN                32
 #define WIFI_PWD_MAX_LEN            64
-#define NET_KEY_MAX_LEN             32
+#define ENCRYPTION_KEY_MAX_LEN      32
 #define FLASH_CONFIG_PARAMS_ADDR    0
 
 
 typedef struct {
-  char SSID_Name[SSID_MAX_LEN];
-  char WiFi_Password[WIFI_PWD_MAX_LEN];
-  uint16_t gatewayID;
-  uint16_t networkID;
-  uint16_t nodeID;
-  char encryptionKey[NET_KEY_MAX_LEN];
-  uint32_t TXPer; // milliseconds
-  uint32_t RXInt;  // Turn on receiver after every 'N' transmits
-  uint32_t RXWait; // How long to leave the receiver on after every 'N' transmits
-  char Reserved[13];
+  char SSID_Name[SSID_MAX_LEN];           // 32
+  char WiFi_Password[WIFI_PWD_MAX_LEN];   // 64
+  uint16_t gatewayID;                     // 2
+  uint16_t networkID;                     // 2
+  uint16_t nodeID;                        // 2
+  char encryptionKey[ENCRYPTION_KEY_MAX_LEN];    // 32
+  uint32_t TXPer; // milliseconds         // 4
+  uint32_t RXInt;  // Turn on receiver after every 'N' transmits   // 4
+  uint32_t RXWait; // How long to leave the receiver on after every 'N' transmits   // 4
+  char Reserved[110];                      // 110
 } flashConfig_t;
 
 
@@ -63,6 +63,7 @@ void displayFlashInfo (void);
 void saveConfigParams (flashConfig_t * data);
 const char * id2chip(const unsigned char *id);
 void loadConfigFromFlash (const flashConfig_t * const flashConfig, flashConfig_t * runtimeConfig);
+void saveConfigToFlash (const flashConfig_t * const flashConfig, const flashConfig_t * runtimeConfig);
 void saveWiFiSSID(char * WiFiSSIDname);
 
 

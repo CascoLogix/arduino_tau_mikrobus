@@ -81,34 +81,18 @@ void saveConfigParams (flashConfig_t * data)
 {
   SerialFlash.eraseBlock(FLASH_CONFIG_PARAMS_ADDR);
   while(!SerialFlash.ready());
-  saveWiFiSSID(data->SSID_Name);
-//  saveWiFiPwd(data->SSID_Name);
-//  saveNetAddr(data->SSID_Name);
-//  saveNetKey(data->SSID_Name);
-//  saveNodeID(data->SSID_Name);
-//  saveTXPer(data->SSID_Name);
-//  saveRXInt(data->SSID_Name);
-//  saveRXWait(data->SSID_Name);
+  saveConfigToFlash(FLASH_CONFIG_PARAMS_ADDR, data);
+  while(!SerialFlash.ready());
 }
 
 void loadConfigFromFlash (const flashConfig_t * const flashConfig, flashConfig_t * runtimeConfig)
 {
-  uint16_t index;
-  uint8_t * ptrRuntimeConfig = (uint8_t*)runtimeConfig;
-  
-  SerialFlash.read((uint32_t)flashConfig, ptrRuntimeConfig, sizeof(flashConfig_t));
+  SerialFlash.read((uint32_t)flashConfig, (void*)runtimeConfig, sizeof(flashConfig_t));
 }
 
-void saveWiFiSSID(char * WiFiSSIDname)
+void saveConfigToFlash(const flashConfig_t * const flashConfig, const flashConfig_t * runtimeConfig)
 {
-  char strReadBack[32];
-  
-  SerialFlash.write(FLASH_CONFIG_PARAMS_ADDR, WiFiSSIDname, strlen(WiFiSSIDname) + 1);
-  SerialUSB.println("WiFi SSID name saved successfully!");
-  //SerialUSB.print("WiFi SSID name, ");
-  //SerialFlash.read(FLASH_CONFIG_PARAMS_ADDR, strReadBack, strlen(WiFiSSIDname));
-  //SerialUSB.print(strReadBack);
-  //SerialUSB.println(" saved successfully!");
+  SerialFlash.write((uint32_t)flashConfig, (const void*)runtimeConfig, sizeof(flashConfig_t));
 }
 
 const char * id2chip(const unsigned char *id)

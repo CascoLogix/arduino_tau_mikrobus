@@ -37,6 +37,12 @@ struct {
 };
 
 
+uint32_t asciiToInt (char strNum[], uint8_t numChars);
+
+
+/***********************************************************************************/
+/* Get Menu Selection
+/***********************************************************************************/
 char getMenuSelection (uint8_t* errStatus)
 {
   uint8_t serialRxBytes = 0;
@@ -47,7 +53,8 @@ char getMenuSelection (uint8_t* errStatus)
 
   while((serialRxBytes < 2) && (rxBuffer[1] != '\r') && (rxBuffer[1] != 0x03))
   {
-    rxBuffer[serialRxBytes++] = getCharFromSerial();
+    while(!SerialUSB.available());      // Wait for char
+    rxBuffer[serialRxBytes++] = SerialUSB.read();
   }
 
   while(SerialUSB.available())        // Empty rx buffer
@@ -75,111 +82,69 @@ char getMenuSelection (uint8_t* errStatus)
   return retVal;
 }
 
-char getCharFromSerial (void)
-{
-  while(!SerialUSB.available());      // Wait for char
-  return SerialUSB.read();            // Read and return received char
-}
-
+/***********************************************************************************/
+/* Prompt for WiFi SSID Name
+/***********************************************************************************/
 void promptWiFiSSID (char WiFiSSIDname[])
 {
   SerialUSB.print("Enter WiFi SSID Name and press 'Enter'");
-  getWiFiSSIDfromSerial(WiFiSSIDname);
-  SerialUSB.println();
-  SerialUSB.println();
-}
-
-void getWiFiSSIDfromSerial(char WiFiSSIDname[])
-{
-  uint8_t charIndex = 0;
-
-  SerialUSB.println();
+  //getWiFiSSIDfromSerial(WiFiSSIDname);
+  getTextFromSerial(WiFiSSIDname, SSID_MAX_LEN);
   
-  do {
-    while(!SerialUSB.available());
-    WiFiSSIDname[charIndex] = SerialUSB.read();
-    if(WiFiSSIDname[charIndex] == '\r' || WiFiSSIDname[charIndex] == 0x03)
-      break;
-    else
-      SerialUSB.print(WiFiSSIDname[charIndex]);
-    charIndex++;
-  } while(charIndex < SSID_MAX_LEN);
-
-  WiFiSSIDname[charIndex] = 0;
-
-  while(SerialUSB.available());
-  {
-    SerialUSB.read();
-  }
-
   if(!validateWiFiSSIDname(WiFiSSIDname))
   {
     SerialUSB.println();
     SerialUSB.println("Invalid WiFi SSID name");
 
     SerialUSB.print("Cannot start with ");
-    for(int i = 0; i < disallowedSSIDchars.numLeading; i++)
+    for(int idx = 0; idx < disallowedSSIDchars.numLeading; idx++)
     {
       SerialUSB.print("'");
-      SerialUSB.print(disallowedSSIDchars.leading[i]);
+      SerialUSB.print(disallowedSSIDchars.leading[idx]);
       SerialUSB.print("' ");
     }
     SerialUSB.println();
 
     SerialUSB.print("Cannot contain ");
-    for(int i = 0; i < disallowedSSIDchars.numGlobal; i++)
+    for(int idx = 0; idx < disallowedSSIDchars.numGlobal; idx++)
     {
       SerialUSB.print("'");
-      SerialUSB.print(disallowedSSIDchars.global[i]);
+      SerialUSB.print(disallowedSSIDchars.global[idx]);
       SerialUSB.print("' ");
     }
     SerialUSB.println();
 
     SerialUSB.print("Cannot contain trailing ");
-    for(int i = 0; i < disallowedSSIDchars.numTrailing; i++)
+    for(int idx = 0; idx < disallowedSSIDchars.numTrailing; idx++)
     {
       SerialUSB.print("'");
-      SerialUSB.print(disallowedSSIDchars.trailing[i]);
+      SerialUSB.print(disallowedSSIDchars.trailing[idx]);
       SerialUSB.print("' ");
     }
     SerialUSB.println();
 
     memset(WiFiSSIDname, 0, SSID_MAX_LEN);
   }
+  
+  SerialUSB.println();
+  SerialUSB.println();
 }
 
+/***********************************************************************************/
+/* Prompt for WiFi Password
+/***********************************************************************************/
 void promptWiFiPassword (char WiFiPassword[])
 {
   SerialUSB.print("Enter WiFi password and press 'Enter'");
-  getWiFiPasswordfromSerial(WiFiPassword);
+  //getWiFiPasswordfromSerial(WiFiPassword);
+  getTextFromSerial(WiFiPassword, WIFI_PWD_MAX_LEN, '*');
   SerialUSB.println();
   SerialUSB.println();
 }
 
-void getWiFiPasswordfromSerial(char WiFiPassword[])
-{
-  uint8_t charIndex = 0;
-
-  SerialUSB.println();
-  
-  do {
-    while(!SerialUSB.available());
-    WiFiPassword[charIndex] = SerialUSB.read();
-    if(WiFiPassword[charIndex] == '\r' || WiFiPassword[charIndex] == 0x03)
-      break;
-    else
-      SerialUSB.print("*");
-    charIndex++;
-  } while(charIndex < SSID_MAX_LEN);
-
-  WiFiPassword[charIndex] = 0;
-
-  while(SerialUSB.available());
-  {
-    SerialUSB.read();
-  }
-}
-
+/***********************************************************************************/
+/* Validate WiFi SSID Name
+/***********************************************************************************/
 bool validateWiFiSSIDname (char WiFiSSIDname[])
 {
   uint8_t charIndex;
@@ -228,75 +193,120 @@ bool validateWiFiSSIDname (char WiFiSSIDname[])
   return true;
 }
 
+/***********************************************************************************/
+/* Print All Config Parameters
+/***********************************************************************************/
 void printConfigParams (flashConfig_t * data)
 {
   printConfigParamSSIDname(data);
   printConfigParamWiFiPwd(data);
-  printConfigParamNetAddr(data);
-  printConfigParamNetKey(data);
+  printConfigParamGateID(data);
+  printConfigParamNetID(data);
   printConfigParamNodeID(data);
+  printConfigParamEncryptionKey(data);
   printConfigParamTXPer(data);
   printConfigParamRXInt(data);
   printConfigParamRXWait(data);
   SerialUSB.println();
 }
 
+/***********************************************************************************/
+/* Print SSID Name From Config Parameters
+/***********************************************************************************/
 void printConfigParamSSIDname (flashConfig_t * data)
 {
   SerialUSB.print("WiFi SSID: ");
-  SerialUSB.println(data->SSID_Name);
-}
-
-void printConfigParamWiFiPwd (flashConfig_t * data)
-{
-  SerialUSB.print("WiFi password: ");
-  if(data->WiFi_Password[0] != 0)
-  {
-    SerialUSB.println("********");
-  }
-  else
+  
+  if(data->SSID_Name[0] == 0xFF)
   {
     SerialUSB.println("not set");
   }
+  else
+  {
+    SerialUSB.println(data->SSID_Name);
+  }
 }
 
-void printConfigParamNetAddr (flashConfig_t * data)
+/***********************************************************************************/
+/* Print WiFi Password From Config Parameters
+/***********************************************************************************/
+void printConfigParamWiFiPwd (flashConfig_t * data)
+{
+  SerialUSB.print("WiFi password: ");
+  if(data->WiFi_Password[0] == 0xFF)
+  {
+    SerialUSB.println("not set");
+  }
+  else
+  {
+    SerialUSB.println("********");
+  }
+}
+
+/***********************************************************************************/
+/* Print Gateway ID From Config Parameters
+/***********************************************************************************/
+void printConfigParamGateID (flashConfig_t * data)
+{
+  SerialUSB.print("Gateway ID: ");
+  SerialUSB.println(data->gatewayID);
+}
+
+/***********************************************************************************/
+/* Print Network ID From Config Parameters
+/***********************************************************************************/
+void printConfigParamNetID (flashConfig_t * data)
 {
   SerialUSB.print("Network ID: ");
   SerialUSB.println(data->networkID);
 }
 
-void printConfigParamNetKey (flashConfig_t * data)
-{
-  SerialUSB.print("Network key: ");
-  if(data->encryptionKey[0] != 0)
-  {
-    SerialUSB.println("********");
-  }
-  else
-  {
-    SerialUSB.println("not set");
-  }
-}
-
+/***********************************************************************************/
+/* Print Node ID From Config Parameters
+/***********************************************************************************/
 void printConfigParamNodeID (flashConfig_t * data)
 {
   SerialUSB.print("Node ID: ");
   SerialUSB.println(data->nodeID);
 }
 
+/***********************************************************************************/
+/* Print Encryption From Config Parameters
+/***********************************************************************************/
+void printConfigParamEncryptionKey (flashConfig_t * data)
+{
+  SerialUSB.print("Encryption key: ");
+  if(data->encryptionKey[0] == 0xFF)
+  {
+    SerialUSB.println("not set");
+  }
+  else
+  {
+    SerialUSB.println("********");
+  }
+}
+
+/***********************************************************************************/
+/* Print TX Period From Config Parameters
+/***********************************************************************************/
 void printConfigParamTXPer (flashConfig_t * data)
 {
   SerialUSB.print("TX period (mS): ");
   SerialUSB.println(data->TXPer);
 }
 
+/***********************************************************************************/
+/* Print RX Interval From Config Parameters
+/***********************************************************************************/
 void printConfigParamRXInt (flashConfig_t * data)
 {
   SerialUSB.print("RX interval: ");
   SerialUSB.println(data->RXInt);
 }
 
+/***********************************************************************************/
+/* Print RX Wait Time From Config Parameters
+/***********************************************************************************/
 void printConfigParamRXWait (flashConfig_t * data)
 {
   SerialUSB.print("RX wait: ");
@@ -309,15 +319,15 @@ void printConfigParamRXWait (flashConfig_t * data)
 void promptEncryptionKey (char encryptionKey[])
 {
   SerialUSB.print("Enter network encryption key and press 'Enter'");
-  getEncryptionKeyfromSerial(encryptionKey);
+  getTextFromSerial(encryptionKey, ENCRYPTION_KEY_MAX_LEN, '*');
   SerialUSB.println();
   SerialUSB.println();
 }
 
 /***********************************************************************************/
-/* Get Encryption Key Chars from Serial
+/* Get Text from Serial
 /***********************************************************************************/
-void getEncryptionKeyfromSerial(char encryptionKey[])
+void getTextFromSerial(char strBuf[], uint8_t numBytes)
 {
   uint8_t charIndex = 0;
 
@@ -325,19 +335,66 @@ void getEncryptionKeyfromSerial(char encryptionKey[])
   
   do {
     while(!SerialUSB.available());
-    encryptionKey[charIndex] = SerialUSB.read();
-    if(encryptionKey[charIndex] == '\r' || encryptionKey[charIndex] == 0x03)
+    strBuf[charIndex] = SerialUSB.read();
+    if(strBuf[charIndex] == '\r' || strBuf[charIndex] == 0x03)
       break;
     else
-      SerialUSB.print("*");
+      SerialUSB.print(strBuf[charIndex]);
     charIndex++;
   } while(charIndex < SSID_MAX_LEN);
 
-  encryptionKey[charIndex] = 0;
+  strBuf[charIndex] = 0;
 
   while(SerialUSB.available());
   {
     SerialUSB.read();
+  }
+}
+
+/***********************************************************************************/
+/* Get Text from Serial (with masked echo chars)
+/***********************************************************************************/
+void getTextFromSerial(char strBuf[], uint8_t numBytes, char echoChar)
+{
+  uint8_t charIndex = 0;
+
+  SerialUSB.println();
+  
+  do {
+    while(!SerialUSB.available());
+    strBuf[charIndex] = SerialUSB.read();
+    if(strBuf[charIndex] == '\r' || strBuf[charIndex] == 0x03)
+      break;
+    else
+      SerialUSB.print(echoChar);
+    charIndex++;
+  } while(charIndex < SSID_MAX_LEN);
+
+  strBuf[charIndex] = 0;
+
+  while(SerialUSB.available());
+  {
+    SerialUSB.read();
+  }
+}
+
+/***********************************************************************************/
+/* Convert ASCII Input Into Integer
+/***********************************************************************************/
+uint32_t asciiToInt (char strNum[], uint8_t numChars)
+{
+  uint32_t retVal = 0;
+
+  // Check for max digits entered
+  if(strlen(strNum) > numChars)
+  {
+    SerialUSB.println("Number contains too many digits");
+  }
+  
+  // Convert ascii digits to 16-bit value
+  else
+  {
+    retVal = atoi(strNum);
   }
 }
 
@@ -346,43 +403,19 @@ void getEncryptionKeyfromSerial(char encryptionKey[])
 /***********************************************************************************/
 uint16_t promptGatewayID (void)
 {
-  /*
-  SerialUSB.print("Enter network encryption key and press 'Enter'");
-  getEncryptionKeyfromSerial(encryptionKey);
-  SerialUSB.println();
-  SerialUSB.println();
-  */
-  return 0;
-}
+  uint16_t retVal = 0;
+  const uint8_t NUM_DIGITS = 5; // 5 digits for 16-bit decimal-fomatted number
+  char strBuf[NUM_DIGITS + 1];
+  
+  SerialUSB.print("Enter gateway ID (max 65535) and press 'Enter'");
+  getTextFromSerial(strBuf, NUM_DIGITS + 1);
 
-/***********************************************************************************/
-/* Get Gateway ID Chars from Serial
-/***********************************************************************************/
-uint16_t getGatewayIDfromSerial(void)
-{
-  /*
-  uint8_t charIndex = 0;
+  retVal = asciiToInt(strBuf, NUM_DIGITS + 1);
 
+  SerialUSB.println();
   SerialUSB.println();
   
-  do {
-    while(!SerialUSB.available());
-    encryptionKey[charIndex] = SerialUSB.read();
-    if(encryptionKey[charIndex] == '\r' || encryptionKey[charIndex] == 0x03)
-      break;
-    else
-      SerialUSB.print("*");
-    charIndex++;
-  } while(charIndex < SSID_MAX_LEN);
-
-  encryptionKey[charIndex] = 0;
-
-  while(SerialUSB.available());
-  {
-    SerialUSB.read();
-  }
-  */
-  return 0;
+  return retVal;
 }
 
 /***********************************************************************************/
@@ -390,43 +423,19 @@ uint16_t getGatewayIDfromSerial(void)
 /***********************************************************************************/
 uint16_t promptNetworkID (void)
 {
-  /*
-  SerialUSB.print("Enter network encryption key and press 'Enter'");
-  getEncryptionKeyfromSerial(encryptionKey);
-  SerialUSB.println();
-  SerialUSB.println();
-  */
-  return 0;
-}
+  uint16_t retVal = 0;
+  const uint8_t NUM_DIGITS = 5; // 5 digits for 16-bit decimal-fomatted number
+  char strBuf[NUM_DIGITS + 1];
+  
+  SerialUSB.print("Enter network ID (max 65535) and press 'Enter'");
+  getTextFromSerial(strBuf, NUM_DIGITS + 1);
 
-/***********************************************************************************/
-/* Get Network ID Chars from Serial
-/***********************************************************************************/
-uint16_t getNetworkIDfromSerial(void)
-{
-  /*
-  uint8_t charIndex = 0;
+  retVal = asciiToInt(strBuf, NUM_DIGITS + 1);
 
+  SerialUSB.println();
   SerialUSB.println();
   
-  do {
-    while(!SerialUSB.available());
-    encryptionKey[charIndex] = SerialUSB.read();
-    if(encryptionKey[charIndex] == '\r' || encryptionKey[charIndex] == 0x03)
-      break;
-    else
-      SerialUSB.print("*");
-    charIndex++;
-  } while(charIndex < SSID_MAX_LEN);
-
-  encryptionKey[charIndex] = 0;
-
-  while(SerialUSB.available());
-  {
-    SerialUSB.read();
-  }
-  */
-  return 0;
+  return retVal;
 }
 
 /***********************************************************************************/
@@ -434,43 +443,19 @@ uint16_t getNetworkIDfromSerial(void)
 /***********************************************************************************/
 uint16_t promptNodeID (void)
 {
-  /*
-  SerialUSB.print("Enter network encryption key and press 'Enter'");
-  getEncryptionKeyfromSerial(encryptionKey);
-  SerialUSB.println();
-  SerialUSB.println();
-  */
-  return 0;
-}
+  uint16_t retVal = 0;
+  const uint8_t NUM_DIGITS = 5; // 5 digits for 16-bit decimal-fomatted number
+  char strBuf[NUM_DIGITS + 1];
+  
+  SerialUSB.print("Enter node ID (max 65535) and press 'Enter'");
+  getTextFromSerial(strBuf, NUM_DIGITS + 1);
 
-/***********************************************************************************/
-/* Get Node ID Chars from Serial
-/***********************************************************************************/
-uint16_t getNodeIDfromSerial(void)
-{
-  /*
-  uint8_t charIndex = 0;
+  retVal = asciiToInt(strBuf, NUM_DIGITS + 1);
 
+  SerialUSB.println();
   SerialUSB.println();
   
-  do {
-    while(!SerialUSB.available());
-    encryptionKey[charIndex] = SerialUSB.read();
-    if(encryptionKey[charIndex] == '\r' || encryptionKey[charIndex] == 0x03)
-      break;
-    else
-      SerialUSB.print("*");
-    charIndex++;
-  } while(charIndex < SSID_MAX_LEN);
-
-  encryptionKey[charIndex] = 0;
-
-  while(SerialUSB.available());
-  {
-    SerialUSB.read();
-  }
-  */
-  return 0;
+  return retVal;
 }
 
 /***********************************************************************************/
@@ -478,43 +463,19 @@ uint16_t getNodeIDfromSerial(void)
 /***********************************************************************************/
 uint32_t promptTXPer (void)
 {
-  /*
-  SerialUSB.print("Enter network encryption key and press 'Enter'");
-  getEncryptionKeyfromSerial(encryptionKey);
-  SerialUSB.println();
-  SerialUSB.println();
-  */
-  return 0;
-}
+  uint32_t retVal = 0;
+  const uint8_t NUM_DIGITS = 10; // 10 digits for 32-bit decimal-fomatted number
+  char strBuf[NUM_DIGITS + 1];
+  
+  SerialUSB.print("Enter transmit period in milliseconds (32-bit max) and press 'Enter'");
+  getTextFromSerial(strBuf, NUM_DIGITS + 1);
 
-/***********************************************************************************/
-/* Get TX Period from Serial
-/***********************************************************************************/
-uint32_t getTXPerfromSerial(void)
-{
-  /*
-  uint8_t charIndex = 0;
+  retVal = asciiToInt(strBuf, NUM_DIGITS + 1);
 
+  SerialUSB.println();
   SerialUSB.println();
   
-  do {
-    while(!SerialUSB.available());
-    encryptionKey[charIndex] = SerialUSB.read();
-    if(encryptionKey[charIndex] == '\r' || encryptionKey[charIndex] == 0x03)
-      break;
-    else
-      SerialUSB.print("*");
-    charIndex++;
-  } while(charIndex < SSID_MAX_LEN);
-
-  encryptionKey[charIndex] = 0;
-
-  while(SerialUSB.available());
-  {
-    SerialUSB.read();
-  }
-  */
-  return 0;
+  return retVal;
 }
 
 /***********************************************************************************/
@@ -522,43 +483,19 @@ uint32_t getTXPerfromSerial(void)
 /***********************************************************************************/
 uint32_t promptRXInt (void)
 {
-  /*
-  SerialUSB.print("Enter network encryption key and press 'Enter'");
-  getEncryptionKeyfromSerial(encryptionKey);
-  SerialUSB.println();
-  SerialUSB.println();
-  */
-  return 0;
-}
+  uint32_t retVal = 0;
+  const uint8_t NUM_DIGITS = 10; // 10 digits for 8-bit decimal-fomatted number
+  char strBuf[NUM_DIGITS + 1];
+  
+  SerialUSB.print("Enter receive interval (32-bit max) and press 'Enter'");
+  getTextFromSerial(strBuf, NUM_DIGITS + 1);
 
-/***********************************************************************************/
-/* Get RX Interval from Serial
-/***********************************************************************************/
-uint32_t getRXIntfromSerial (void)
-{
-  /*
-  uint8_t charIndex = 0;
+  retVal = asciiToInt(strBuf, NUM_DIGITS + 1);
 
+  SerialUSB.println();
   SerialUSB.println();
   
-  do {
-    while(!SerialUSB.available());
-    encryptionKey[charIndex] = SerialUSB.read();
-    if(encryptionKey[charIndex] == '\r' || encryptionKey[charIndex] == 0x03)
-      break;
-    else
-      SerialUSB.print("*");
-    charIndex++;
-  } while(charIndex < SSID_MAX_LEN);
-
-  encryptionKey[charIndex] = 0;
-
-  while(SerialUSB.available());
-  {
-    SerialUSB.read();
-  }
-  */
-  return 0;
+  return retVal;
 }
 
 /***********************************************************************************/
@@ -566,43 +503,18 @@ uint32_t getRXIntfromSerial (void)
 /***********************************************************************************/
 uint32_t promptRXWait (void)
 {
-  /*
-  SerialUSB.print("Enter network encryption key and press 'Enter'");
-  getEncryptionKeyfromSerial(encryptionKey);
-  SerialUSB.println();
-  SerialUSB.println();
-  */
-  return 0;
-}
+  uint32_t retVal = 0;
+  const uint8_t NUM_DIGITS = 10; // 10 digits for 32-bit decimal-fomatted number
+  char strBuf[NUM_DIGITS + 1];
+  
+  SerialUSB.print("Enter transmit period in microseconds (32-bit max) and press 'Enter'");
+  getTextFromSerial(strBuf, NUM_DIGITS + 1);
 
-/***********************************************************************************/
-/* Get RX Wait from Serial
-/***********************************************************************************/
-uint32_t getRXWaitfromSerial(void)
-{
-  /*
-  uint8_t charIndex = 0;
+  retVal = asciiToInt(strBuf, NUM_DIGITS + 1);
 
+  SerialUSB.println();
   SerialUSB.println();
   
-  do {
-    while(!SerialUSB.available());
-    encryptionKey[charIndex] = SerialUSB.read();
-    if(encryptionKey[charIndex] == '\r' || encryptionKey[charIndex] == 0x03)
-      break;
-    else
-      SerialUSB.print("*");
-    charIndex++;
-  } while(charIndex < SSID_MAX_LEN);
-
-  encryptionKey[charIndex] = 0;
-
-  while(SerialUSB.available());
-  {
-    SerialUSB.read();
-  }
-  */
-  return 0;
+  return retVal;
 }
-
 

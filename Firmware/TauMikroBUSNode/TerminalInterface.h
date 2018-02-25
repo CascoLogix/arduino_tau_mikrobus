@@ -32,38 +32,29 @@
 
 void displayConfigurationMenu (void);
 char getMenuSelection (uint8_t* errStatus);
-char getCharFromSerial (void);
 void promptWiFiSSID (char WiFiSSIDname[]);
-void getWiFiSSIDfromSerial (char WiFiSSIDname[]);
+void getTextFromSerial(char strBuf[], uint8_t numBytes);
+void getTextFromSerial(char strBuf[], uint8_t numBytes, char echoChar);
 void promptWiFiPassword (char WiFiPassword[]);
-void getWiFiPasswordfromSerial (char WiFiPassword[]);
-void promptNetKey (char NetKey[]);
-void getNetKeyfromSerial (char netKey[]);
+void promptEncryptionKey (char encryptionKey[]);
 bool validateWiFiSSIDname (char WiFiSSIDname[]);
 void saveWiFiSSID (char * WiFiSSIDname);
 void printConfigParams (flashConfig_t * data);
 void printConfigParamSSIDname (flashConfig_t * data);
 void printConfigParamWiFiPwd (flashConfig_t * data);
-void printConfigParamNetAddr (flashConfig_t * data);
-void printConfigParamNetKey (flashConfig_t * data);
+void printConfigParamGateID (flashConfig_t * data);
+void printConfigParamNetID (flashConfig_t * data);
 void printConfigParamNodeID (flashConfig_t * data);
+void printConfigParamEncryptionKey (flashConfig_t * data);
 void printConfigParamTXPer (flashConfig_t * data);
 void printConfigParamRXInt (flashConfig_t * data);
 void printConfigParamRXWait (flashConfig_t * data);
-void promptEncryptionKey (char encryptionKey[]);
-void getEncryptionKeyfromSerial(char encryptionKey[]);
 uint16_t promptGatewayID (void);
-uint16_t getGatewayIDfromSerial(void);
 uint16_t promptNetworkID (void);
-uint16_t getNetworkIDfromSerial(void);
 uint16_t promptNodeID (void);
-uint16_t getNodeIDfromSerial(void);
 uint32_t promptTXPer (void);
-uint32_t getTXPerfromSerial(void);
 uint32_t promptRXInt (void);
-uint32_t getRXIntfromSerial (void);
 uint32_t promptRXWait (void);
-uint32_t getRXWaitfromSerial(void);
 
 
 #endif  // __TERMINAL_INTERFACE_H__
