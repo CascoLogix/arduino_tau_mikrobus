@@ -41,23 +41,16 @@
 
 
 typedef struct {
-  uint8_t first;
-  uint8_t second;
-  uint8_t third;
-  uint8_t fourth;
-} ipAddr_t;
-
-
-typedef struct {
   char SSID_Name[SSID_MAX_LEN];
   char WiFi_Password[WIFI_PWD_MAX_LEN];
-  ipAddr_t NetAddr;
-  char NetKey[NET_KEY_MAX_LEN];
-  uint8_t NodeID;
+  uint16_t gatewayID;
+  uint16_t networkID;
+  uint16_t nodeID;
+  char encryptionKey[NET_KEY_MAX_LEN];
   uint32_t TXPer; // milliseconds
-  uint8_t RXInt;  // Turn on receiver after every 'N' transmits
-  uint8_t RXWait; // How long to leave the receiver on after every 'N' transmits
-  char Reserved[40];
+  uint32_t RXInt;  // Turn on receiver after every 'N' transmits
+  uint32_t RXWait; // How long to leave the receiver on after every 'N' transmits
+  char Reserved[13];
 } flashConfig_t;
 
 

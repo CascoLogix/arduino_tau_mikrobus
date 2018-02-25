@@ -50,6 +50,20 @@ void printConfigParamNodeID (flashConfig_t * data);
 void printConfigParamTXPer (flashConfig_t * data);
 void printConfigParamRXInt (flashConfig_t * data);
 void printConfigParamRXWait (flashConfig_t * data);
+void promptEncryptionKey (char encryptionKey[]);
+void getEncryptionKeyfromSerial(char encryptionKey[]);
+uint16_t promptGatewayID (void);
+uint16_t getGatewayIDfromSerial(void);
+uint16_t promptNetworkID (void);
+uint16_t getNetworkIDfromSerial(void);
+uint16_t promptNodeID (void);
+uint16_t getNodeIDfromSerial(void);
+uint32_t promptTXPer (void);
+uint32_t getTXPerfromSerial(void);
+uint32_t promptRXInt (void);
+uint32_t getRXIntfromSerial (void);
+uint32_t promptRXWait (void);
+uint32_t getRXWaitfromSerial(void);
 
 
 #endif  // __TERMINAL_INTERFACE_H__

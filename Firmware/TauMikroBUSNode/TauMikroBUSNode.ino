@@ -86,33 +86,38 @@ void configureSettings (void)
           break;
 
         case '3':
-          SerialUSB.println("Case 3");
+          //SerialUSB.println("Case 3");
+          runtimeParams.gatewayID = promptGatewayID();
           break;
 
         case '4':
           //SerialUSB.println("Case 4");
-          promptNetKey(runtimeParams.NetKey);
+          runtimeParams.networkID = promptNetworkID();
           break;
 
         case '5':
-          SerialUSB.println("Case 5");
+          //SerialUSB.println("Case 5");
+          runtimeParams.nodeID = promptNodeID();
           break;
 
         case '6':
-          SerialUSB.println("Case 6");
+          //SerialUSB.println("Case 6");
+          promptEncryptionKey(runtimeParams.encryptionKey);
           break;
 
         case '7':
-          SerialUSB.println("Case 7");
+          //SerialUSB.println("Case 7");
+          runtimeParams.TXPer = promptTXPer();
           break;
 
         case '8':
-          SerialUSB.println("Case 8");
+          //SerialUSB.println("Case 8");
+          runtimeParams.RXInt = promptRXInt();
           break;
 
         case '9':
           //SerialUSB.println("Case 9");
-          loadConfigFromFlash(FLASH_CONFIG_PARAMS_ADDR, &runtimeParams);
+          runtimeParams.RXWait = promptRXWait();
           break;
 
         case 'L': case 'l':
