@@ -30,6 +30,8 @@
 #include "ApplicationFlashFunctions.h"
 
 
+void configureSettings (void);
+char terminalInterface (void);
 void displayConfigurationMenu (void);
 char getMenuSelection (uint8_t* errStatus);
 void promptWiFiSSID (char WiFiSSIDname[]);

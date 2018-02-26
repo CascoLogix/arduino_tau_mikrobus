@@ -29,9 +29,15 @@
 #define TERM_CHAR                   '\r'      // Carriage return character
 //#define TERM_CHAR                 '\n'      // Newline character
 
-#define MENU_EXIT                   '0'
-
 #define FLASH_CS_PIN                4
+#define SD_CS_PIN                   10
+#define MIKROBUS_PWM_PIN            8
+#define MIKROBUS_INT_PIN            2
+#define MIKROBUS_AN_PIN             A0
+#define MIKROBUS_SERIAL             Serial
+#define MIKROBUS_SPI_CS_PIN         5
+
+#define CONFIG_FILENAME             "config.bin"
 
 
 #endif  // __MAIN_H__

@@ -31,10 +31,10 @@
 #include "ApplicationFlashFunctions.h"
 
 
-void SDisDetected (void);
-void SDFileExists (char filename[]);
-void SDFileIsValid (char filename[]);
-void SDReadFile (flashConfig_t * data);
+bool SDCardDetected (void);
+bool SDFileExists (char filename[]);
+bool SDFileIsValid (char filename[]);
+void SDReadFile (char filename[], flashConfig_t * data);
 void SDCreateLogFile (char filename[]);
 void SDAppendLogFile (char filename[]);
 
