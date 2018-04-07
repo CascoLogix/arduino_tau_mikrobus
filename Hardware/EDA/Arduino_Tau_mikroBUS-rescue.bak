@@ -1,0 +1,21 @@
+EESchema-LIBRARY Version 2.3
+#encoding utf-8
+#
+# BATTERY_GENERIC-RESCUE-Arduino_Pro_Mini_mikroBUS
+#
+DEF BATTERY_GENERIC-RESCUE-Arduino_Pro_Mini_mikroBUS B 0 0 N N 1 F N
+F0 "B" 165 35 40 H V C CNN
+F1 "BATTERY_GENERIC-RESCUE-Arduino_Pro_Mini_mikroBUS" 400 -30 40 H V C CNN
+F2 "" 0 0 60 H V C CNN
+F3 "" 0 0 60 H V C CNN
+DRAW
+P 2 0 1 0 -100 0 100 0 N
+P 2 0 1 0 -100 50 100 50 N
+P 2 0 1 0 -50 -25 50 -25 N
+P 2 0 1 0 -50 25 50 25 N
+X + 1 0 150 100 D 40 40 1 1 P
+X - 2 0 -125 100 U 40 40 1 1 P
+ENDDRAW
+ENDDEF
+#
+#End Library

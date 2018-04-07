@@ -1,4 +1,4 @@
-update=2/17/2018 8:45:10 AM
+update=4/7/2018 8:57:59 AM
 version=1
 last_client=kicad
 [pcbnew]
@@ -23,8 +23,6 @@ ModuleOutlineThickness=0.150000000000
 [cvpcb]
 version=1
 NetIExt=net
-[general]
-version=1
 [eeschema]
 version=1
 LibDir=C:/Engineering/KiCAD_Libraries/Schematic
@@ -89,3 +87,5 @@ NetFmtName=Pcbnew
 SpiceForceRefPrefix=0
 SpiceUseNetNumbers=0
 LabSize=40
+[general]
+version=1
